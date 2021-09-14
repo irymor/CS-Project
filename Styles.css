@@ -25,7 +25,7 @@ body {
 img {
     height: 7rem;
     width: 4rem;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     border-radius: 0.2rem;
 }
 
@@ -84,4 +84,26 @@ img {
 
 .pile-shown {
     grid-column: span 2;
+}
+
+/*.selected > .card {*/
+/*    border-right: 1px dashed red;*/
+/*    border-left: 1px dashed red;*/
+/*    border-radius: 0.3rem;*/
+/*}*/
+
+/*.selected > .card {*/
+/*    border-right: 1px dashed red;*/
+/*    border-left: 1px dashed red;*/
+/*    border-radius: 0.3rem;*/
+/*}*/
+
+.selected {
+    top: 15px;
+    border-top: 3px dashed red;
+}
+
+.shown-selected {
+    top: 0px;
+    border: 3px dashed red;
 }
