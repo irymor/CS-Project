@@ -158,7 +158,7 @@ function shuffle(array) {
 }
 
 let isCardSelected = false;
-let selectedCard;
+let selectedCard = new Card(0, 0);
 
 const OPEN_CARDS = [];
 
@@ -175,7 +175,10 @@ function setShownCard(newOpenCard) {
     let img = document.createElement("img");
     img.src = newOpenCard.image;
     img.id = newOpenCard.suit + newOpenCard.value + "Image";
-    img.onclick = function() {shownCardClicked(element);};
+    img.onclick = function() {
+        shownCardClicked(element);
+        img.classList.add("shown-selected");
+    };
     element.appendChild(img);
 
     if (shownDiv.hasChildNodes()) {
@@ -268,6 +271,13 @@ function getCardObject(id) {
     return CARDS_DICT[id];
 }
 
+function removeClassFromAll(className) {
+    let elements = document.getElementsByClassName(className);
+    for(let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove(className);
+    }
+}
+
 
 function cardClicked(cardElement) {
     console.log("clicked " + cardElement.id);
@@ -280,6 +290,7 @@ function cardClicked(cardElement) {
     } else if (isCardSelected) {
         if (cardObject.pile.isLegal(selectedCard)) {
             document.getElementById(selectedCard.id).classList.remove("selected");
+            removeClassFromAll("shown-selected");
             // document.getElementById(selectedCard.id + "Image").classList.remove("shown-selected");
 
             if (selectedCard === OPEN_CARDS[OPEN_CARDS.length-1]) {
@@ -287,7 +298,6 @@ function cardClicked(cardElement) {
                 // document.getElementById("PileShown").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
                 // document.getElementById(selectedCard.id).id = OPEN_CARDS[OPEN_CARDS.length-1].id;
                 setShownCard(OPEN_CARDS[OPEN_CARDS.length-1]);
-
             } else {
                 let oldPile = selectedCard.pile;
                 oldPile.removeCard(selectedCard);

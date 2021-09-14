@@ -107,3 +107,8 @@ img {
     top: 0px;
     border: 3px dashed red;
 }
+
+.pile-border, .foundation {
+    border: 1px outset grey;
+    border-radius: 0.2rem;
+}
