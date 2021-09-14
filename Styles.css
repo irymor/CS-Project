@@ -1,0 +1,87 @@
+body {
+    padding: 2rem;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 4rem);
+    grid-template-rows: 7rem auto;
+    /*grid-auto-rows: auto;*/
+    column-gap: 0.5rem;
+    row-gap: 2rem;
+}
+
+
+.deck {
+    /*border: 1px solid black;*/
+    /*border-radius: 0.2rem;*/
+    /*height: 100%*/
+}
+
+.card {
+    /*height: 100%;*/
+    /*width: 100%;*/
+
+}
+
+img {
+    height: 7rem;
+    width: 4rem;
+    border: 1px solid black;
+    border-radius: 0.2rem;
+}
+
+.foundation {
+    grid-row: 1;
+    /*grid-column: 3 / 6;*/
+}
+
+
+.stack {
+    grid-row: 2;
+    display: grid;
+    position: relative;
+    grid-template-rows: auto;
+    grid-template-columns: 4rem;
+}
+
+.card-stack {
+    grid-row: 1;
+    /*position: absolute;*/
+    z-index: 1;
+    /*bottom: 20px;*/
+}
+.card-stack2, .card-stack {
+    grid-row: 1;
+}
+.card-stack2 {
+    grid-row: 1;
+    position: absolute;
+    /*top: var(--top);*/
+    top: 30px;
+    /*grid-row-end: span 2;*/
+    z-index: 2;
+}
+
+
+/*.card-stack3 {*/
+/*    padding-top: 1.9rem;*/
+/*    z-index: 1;*/
+/*}*/
+
+/*.card-stack2 {*/
+/*    padding-top: 1.9rem;*/
+/*    z-index: 2;*/
+/*}*/
+
+/*.card-stack2, .card-stack, .card-stack3 {*/
+/*    grid-row: 1;*/
+/*    grid-column: 1;*/
+/*}*/
+
+.pile {
+    grid-row: 1;
+    height: 7rem;
+}
+
+.pile-shown {
+    grid-column: span 2;
+}
