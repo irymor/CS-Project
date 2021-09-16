@@ -46,6 +46,10 @@ class Card {
         return card;
     }
 
+    getImageElement() {
+        return this.getElement().firstChild;
+    }
+
     getElement() {
         return this.element;
     }
@@ -79,7 +83,7 @@ class Pile {
             this.initialAddCard(card, this.size);
             this.size++;
         });
-        this.last.setVisible();
+        this.setLastVisible();
     }
 
     isLegal(card) {
@@ -87,24 +91,33 @@ class Pile {
             this.last.value === 1 + card.value) {
             return true;
         } else {
+            console.log("Illegal: "); console.log(card);
             alert("Illegal move!");
             return false;
         }
     }
 
     addCard(card) {
-        this.last.getElement().appendChild(card.getElement());
+        if (this.size === 0) {
+            this.getElement().appendChild(card.getElement());
+            card.getElement().classList.remove("card-stack2");
+            card.getElement().classList.add("card-stack");
+            card.pile = this;
+        } else {
+            this.last.getElement().appendChild(card.getElement());
+            this.last.addChild(card);
+        }
         console.log(this.cards);
         this.cards.push(card);
         this.size++;
-        this.last.addChild(card);
+        this.last = card;
         // console.log("last:"); console.log(this.last);
         while (card.childCard != null) {
             card = card.childCard;
             this.cards.push(card);
             this.size++;
+            this.last = card;
         }
-        this.last = card;
 
         return true;
     }
@@ -146,6 +159,10 @@ class Pile {
     getElement() {
         return document.getElementById(this.id);
     }
+
+    setLastVisible() {
+        if (this.last != null) this.last.setVisible();
+    }
 }
 
 function shuffle(array) {
@@ -164,22 +181,29 @@ const OPEN_CARDS = [];
 
 function setShownCard(newOpenCard) {
     let shownDiv = document.getElementById("ShownCardDiv");
-    if (typeof newOpenCard === "undefined") {
+    if (newOpenCard == null) {
         // shownDiv.removeChild(shownDiv.firstChild);
         return;
     }
-    OPEN_CARDS.push(newOpenCard);
+
+    // OPEN_CARDS.push(newOpenCard);
 
     let element = newOpenCard.getElement();
-    element.removeChild(element.firstChild);
-    let img = document.createElement("img");
-    img.src = newOpenCard.image;
-    img.id = newOpenCard.suit + newOpenCard.value + "Image";
+    let img = newOpenCard.getImageElement();
     img.onclick = function() {
         shownCardClicked(element);
         img.classList.add("shown-selected");
     };
-    element.appendChild(img);
+
+    // element.removeChild(element.firstChild);
+    // let img = document.createElement("img");
+    // img.src = newOpenCard.image;
+    // img.id = newOpenCard.suit + newOpenCard.value + "Image";
+    // img.onclick = function() {
+    //     shownCardClicked(element);
+    //     img.classList.add("shown-selected");
+    // };
+    // element.appendChild(img);
 
     if (shownDiv.hasChildNodes()) {
         shownDiv.replaceChild(element, shownDiv.firstChild);
@@ -192,10 +216,12 @@ function setShownCard(newOpenCard) {
 function openCard(){
     console.log("opening card");
     console.log(isCardSelected);
+    deselect();
 
     let newOpenCard = CARDS.pop();
     setShownCard(newOpenCard);
-
+    OPEN_CARDS.push(newOpenCard);
+    document.getElementById("counter").innerText = "Left in pile: " + CARDS.length;
 
 
     // if (OPEN_CARDS.length === 1) {
@@ -287,25 +313,118 @@ function cardClicked(cardElement) {
         cardElement.classList.add("selected");
         selectedCard = cardObject;
         isCardSelected = true;
-    } else if (isCardSelected) {
-        if (cardObject.pile.isLegal(selectedCard)) {
-            document.getElementById(selectedCard.id).classList.remove("selected");
-            removeClassFromAll("shown-selected");
-            // document.getElementById(selectedCard.id + "Image").classList.remove("shown-selected");
-
-            if (selectedCard === OPEN_CARDS[OPEN_CARDS.length-1]) {
-                OPEN_CARDS.pop();
-                // document.getElementById("PileShown").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
-                // document.getElementById(selectedCard.id).id = OPEN_CARDS[OPEN_CARDS.length-1].id;
-                setShownCard(OPEN_CARDS[OPEN_CARDS.length-1]);
-            } else {
-                let oldPile = selectedCard.pile;
-                oldPile.removeCard(selectedCard);
-                console.log("last"); console.log(oldPile.last);
-                oldPile.last.setVisible();
-            }
-            isCardSelected = false;
-            cardObject.pile.addCard(selectedCard)
+    } else if (isCardSelected)  {
+        // if (cardObject.pile.isLegal(selectedCard)) {
+        if (isLegalMove(selectedCard, cardObject)) {
+            moveCard(cardElement);
+            cardObject.pile.addCard(selectedCard);
         }
+    }
+}
+
+function moveCard(cardElement, toFoundation=false) {
+    console.log("moveCard"); console.log(cardElement);
+    let cardObject = getCardObject(cardElement.id);
+    selectedCard.getElement().classList.remove("selected");
+    removeClassFromAll("shown-selected");
+
+    let selectedElement = selectedCard.getElement();
+    if (toFoundation) {
+        selectedCard.getImageElement().onclick = function() {};
+    } else {
+        selectedCard.getImageElement().onclick = function() {cardClicked(selectedElement)};
+    }
+    console.log(selectedCard.getImageElement().onclick);
+    // console.log(cardObject.getImageElement().onclick);
+    // document.getElementById(selectedCard.id + "Image").classList.remove("shown-selected");
+    if (selectedCard === OPEN_CARDS[OPEN_CARDS.length-1]) {
+        OPEN_CARDS.pop();
+        // document.getElementById("PileShown").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
+        // document.getElementById(selectedCard.id).id = OPEN_CARDS[OPEN_CARDS.length-1].id;
+        setShownCard(OPEN_CARDS[OPEN_CARDS.length-1]);
+    } else {
+        let oldPile = selectedCard.pile;
+        oldPile.removeCard(selectedCard);
+        console.log("last"); console.log(oldPile.last);
+        oldPile.setLastVisible();
+    }
+    isCardSelected = false;
+}
+
+const FOUNDATIONS = {
+    "Club": 0,
+    "Diamond": 0,
+    "Heart": 0,
+    "Spade": 0
+};
+// const FOUNDATION_PILES = {
+//     "Club": new Pile([], 8),
+//     "Diamond": new Pile([], 9),
+//     "Heart": new Pile([], 10),
+//     "Spade": new Pile([], 11)
+// };
+// console.log(FOUNDATION_PILES);
+// SUITS.forEach(suit => {
+//     FOUNDATION_PILES[suit].
+// })
+function FoundationClicked(suit) {
+    if (!isCardSelected || selectedCard.suit !== suit || FOUNDATIONS[suit] + 1 !== selectedCard.value) {
+        alert("Illegal move");
+        console.log(!isCardSelected, selectedCard.suit !== suit, FOUNDATIONS[suit] + 1 !== selectedCard.value);
+        return;
+    }
+    if (selectedCard.childCard != null) {
+        alert("Illegal move4");
+        return;
+    }
+    let foundationDiv = document.getElementById(suit + "Foundation");
+    moveCard(foundationDiv.firstChild, true);
+
+    // FOUNDATION_PILES[suit].addCard(selectedCard);
+    let foundationPile = document.getElementById(suit + "Foundation");
+    foundationPile.removeChild(foundationPile.firstChild);
+    foundationPile.replaceChild(selectedCard.getElement(), foundationPile.firstChild);
+    FOUNDATIONS[suit]++;
+
+    // if (selectedCard.value === 1) {
+    //     document.getElementById(suit + "Foundation").firstChild.removeChild(
+    //         document.getElementById(suit + "Foundation").firstChild.firstChild);
+    // }
+
+}
+
+function deselect() {
+    isCardSelected = false;
+    selectedCard = null;
+    removeClassFromAll("selected");
+    removeClassFromAll("shown-selected");
+}
+
+function isLegalMove(card, destinationCard) {
+
+    if (destinationCard.color + card.color === 1 &&
+        destinationCard.value === 1 + card.value) {
+        return true;
+    } else if (card.value === 1 + destinationCard.value &&
+        card.suit === destinationCard.suit &&
+        FOUNDATIONS[destinationCard.suit] === destinationCard.value) {
+        return true;
+    }  else {
+        console.log("Illegal: "); console.log(card);
+        console.log("destinationCard: "); console.log(destinationCard);
+        alert("Illegal move!3");
+        return false;
+    }
+}
+
+function stackClicked(stackId) {
+    console.log("stack clicked: " + stackId);
+    let stack = document.getElementById("Stack" + stackId);
+    if (!stack.hasChildNodes() && isCardSelected && selectedCard.value === 13) {
+        console.log("stack clicked moving "); console.log(selectedCard);
+        moveCard(selectedCard.getElement());
+
+        console.log("stack clicked adding to pile:"); console.log(PILES[stackId]);
+        PILES[stackId].addCard(selectedCard);
     }
 }

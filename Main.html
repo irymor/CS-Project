@@ -16,35 +16,48 @@
     </div>
     <div class="pile pile-shown deck" id="ShownCardDiv"></div>
 
-
-    <div class="clubs foundation deck" id="ClubFoundation">
-        <div class="card">
-            <img src="Images/Cards/Club/1.png">
-        </div>
-    </div>
-    <div class="diamonds foundation deck" id="DiamondFoundation">
-        <div class="card">
-            <img src="Images/Cards/Diamond/1.png">
-        </div>
-    </div>
-    <div class="hearts foundation deck" id="HeartFoundation">
-        <div class="card">
-            <img src="Images/Cards/Heart/1.png">
-        </div>
-    </div>
-    <div class="spades foundation deck" id="SpadeFoundation">
-        <div class="card">
-            <img src="Images/Cards/Spade/1.png">
-        </div>
+    <div class="button-counter" id="button-counter">
+        <button onclick="deselect()">Cancel</button>
+        <p class="counter" id="counter">Left in pile: 24</p>
     </div>
 
-    <div class="stack deck" id="Stack0"></div>
-    <div class="stack deck" id="Stack1"></div>
-    <div class="stack deck" id="Stack2"></div>
-    <div class="stack deck" id="Stack3"></div>
-    <div class="stack deck" id="Stack4"></div>
-    <div class="stack deck" id="Stack5"></div>
-    <div class="stack deck" id="Stack6"></div>
+
+    <div class="spades foundation deck" id="SpadeFoundation" onclick="FoundationClicked('Spade')">
+        <div class="foundation-suit" id="Stack11">♠</div>
+<!--                <div class="card">-->
+<!--                    <img src="Images/Cards/Spade/1.png">-->
+<!--                </div>-->
+    </div>
+
+    <div class="diamonds foundation deck" id="DiamondFoundation" onclick="FoundationClicked('Diamond')">
+        <div class="foundation-suit" id="Stack9">♦</div>
+        <!--        <div class="card">-->
+<!--            <img src="Images/Cards/Diamond/1.png">-->
+<!--        </div>-->
+    </div>
+
+    <div class="clubs foundation deck" id="ClubFoundation" onclick="FoundationClicked('Club')">
+        <div class="foundation-suit" id="Stack8">♣</div>
+        <!--        <div class="card">-->
+        <!--            <img src="Images/Cards/Club/club.jpg" class="foundation-suit">-->
+        <!--        </div>-->
+    </div>
+
+    <div class="hearts foundation deck" id="HeartFoundation" onclick="FoundationClicked('Heart')">
+        <div class="foundation-suit" id="Stack10">♥</div>
+        <!--        <div class="card">-->
+<!--            <img src="Images/Cards/Heart/1.png">-->
+<!--        </div>-->
+    </div>
+
+
+    <div class="stack deck" id="Stack0" onclick="stackClicked(0)"></div>
+    <div class="stack deck" id="Stack1" onclick="stackClicked(1)"></div>
+    <div class="stack deck" id="Stack2" onclick="stackClicked(2)"></div>
+    <div class="stack deck" id="Stack3" onclick="stackClicked(3)"></div>
+    <div class="stack deck" id="Stack4" onclick="stackClicked(4)"></div>
+    <div class="stack deck" id="Stack5" onclick="stackClicked(5)"></div>
+    <div class="stack deck" id="Stack6" onclick="stackClicked(6)"></div>
 
 
 

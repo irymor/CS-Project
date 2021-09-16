@@ -1,12 +1,15 @@
 body {
+    background: green;
     padding: 2rem;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(7, 4rem);
-    grid-template-rows: 7rem auto;
+    grid-template-rows: 7rem 10rem;
     /*grid-auto-rows: auto;*/
     column-gap: 0.5rem;
     row-gap: 2rem;
+    /*align-items: center;*/
+    /*justify-items: center;*/
 }
 
 
@@ -32,6 +35,11 @@ img {
 .foundation {
     grid-row: 1;
     /*grid-column: 3 / 6;*/
+    /*align-self: center;*/
+    /*justify-self: center;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -83,7 +91,7 @@ img {
 }
 
 .pile-shown {
-    grid-column: span 2;
+    /*grid-column: span 2;*/
 }
 
 /*.selected > .card {*/
@@ -111,4 +119,54 @@ img {
 .pile-border, .foundation {
     border: 1px outset grey;
     border-radius: 0.2rem;
+}
+
+.foundation-suit {
+    /*align-items: center;*/
+    /*justify-items: center;*/
+    font-size: 6rem;
+    user-select: none;
+}
+
+.hearts, .diamonds {
+    color: red;
+}
+
+.button-counter {
+    grid-row: 1;
+    grid-column: 3;
+    display: grid;
+    grid-template-rows: 3rem 3rem;
+    /*gap: 1rem;*/
+    grid-template-columns: 4rem;
+    /*justify-content: center;*/
+    /*align-items: center;*/
+}
+
+button {
+    grid-row: 1;
+    border: 2px solid mediumblue;
+    /* border: none; */
+    border-radius: 0.2rem;
+    font-size: 16px;
+    background-color: inherit;
+    color: black;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    color: white;
+    background-color: mediumblue;
+    /*box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);*/
+}
+
+.counter {
+    grid-row: 2;
+    /*justify-content: center;*/
+    /*align-content: center;*/
+    /*justify-self: center;*/
+    /*align-self: center;*/
+    /*display: flex;*/
+    text-align: center;
 }
