@@ -9,7 +9,7 @@ class Card {
         this.visible = visible;
         this.image = "Images/Cards/" + this.suit + "/" + this.value + ".png";
         this.id = this.suit + this.value;
-        // this.topMargin = 0;
+
         if (suit === "Heart" || suit === "Diamond") {
             this.color = 0; //Red
         } else {
@@ -54,14 +54,10 @@ class Card {
         return this.element;
     }
 
-    // setTopMargin(margin) {
-    //     this.getElement().style = "--top: " + margin + "px";
-    // }
-
     addChild(otherCard) {
         console.log("adding");
         this.childCard = otherCard;
-        // otherCard.setTopMargin(this.topMargin + 30);
+
         otherCard.getElement().classList.add("card-stack2");
         this.getElement().appendChild(otherCard.getElement());
         otherCard.pile = this.pile;
@@ -105,21 +101,13 @@ class Pile {
             card.getElement().classList.add("card-stack");
             card.pile = this;
         } else {
-            // this.last.getElement().appendChild(card.getElement());
             this.last.addChild(card);
         }
         console.log(this.cards);
         this.cards.push(card);
         this.size++;
         this.last = card;
-        // console.log("last:"); console.log(this.last);
-        // while (card.childCard != null) {
-        //     card = card.childCard;
-        //     // this.cards.push(card);
-        //     // this.size++;
-        //     // this.last = card;
-        //     this.addCard(card);
-        // }
+
         if (card.childCard != null) {
             this.addCard(card.childCard);
         }
@@ -179,19 +167,12 @@ function shuffle(array) {
     }
 }
 
-let isCardSelected = false;
-let selectedCard = new Card(0, 0);
-
-const OPEN_CARDS = [];
-
 function setShownCard(newOpenCard) {
     let shownDiv = document.getElementById("ShownCardDiv");
     if (newOpenCard == null) {
-        // shownDiv.removeChild(shownDiv.firstChild);
+
         return;
     }
-
-    // OPEN_CARDS.push(newOpenCard);
 
     let element = newOpenCard.getElement();
     let img = newOpenCard.getImageElement();
@@ -199,16 +180,6 @@ function setShownCard(newOpenCard) {
         img.classList.add("shown-selected");
         shownCardClicked(element);
     };
-
-    // element.removeChild(element.firstChild);
-    // let img = document.createElement("img");
-    // img.src = newOpenCard.image;
-    // img.id = newOpenCard.suit + newOpenCard.value + "Image";
-    // img.onclick = function() {
-    //     shownCardClicked(element);
-    //     img.classList.add("shown-selected");
-    // };
-    // element.appendChild(img);
 
     if (shownDiv.hasChildNodes()) {
         shownDiv.replaceChild(element, shownDiv.firstChild);
@@ -227,20 +198,6 @@ function openCard(){
     setShownCard(newOpenCard);
     OPEN_CARDS.push(newOpenCard);
     document.getElementById("counter").innerText = "Left in pile: " + CARDS.length;
-
-
-    // if (OPEN_CARDS.length === 1) {
-    //
-    //
-    //     document.getElementById("ShownCard").id = OPEN_CARDS[OPEN_CARDS.length-1].id;
-    //     document.getElementById("PileShown").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
-    //     document.getElementById("PileShown").id = OPEN_CARDS[OPEN_CARDS.length-1].id + "Image";
-    // } else {
-    //     document.getElementById(OPEN_CARDS[OPEN_CARDS.length-2].id).id = OPEN_CARDS[OPEN_CARDS.length-1].id;
-    //     document.getElementById(OPEN_CARDS[OPEN_CARDS.length-2].id + "Image").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
-    //     document.getElementById(OPEN_CARDS[OPEN_CARDS.length-2].id + "Image").id = OPEN_CARDS[OPEN_CARDS.length-1].id + "image";
-    //
-    // }
 
     if (CARDS.length === 0) {
         document.getElementById("PileCards").removeChild(document.getElementById("PileFlipped"));
@@ -261,43 +218,9 @@ function shownCardClicked(cardElement) {
         return;
     }
 
-    // document.getElementById(cardElement.id).firstChild.
+
     selectedCard = cardObject;
     isCardSelected = true;
-}
-
-
-const CARDS = [];
-const SUITS = ["Club", "Diamond", "Heart", "Spade"];
-const CARDS_DICT = {};
-let cnt = 0;
-SUITS.forEach(suit => {
-    for(let i = 1;  i <= 13; i++) {
-        CARDS[cnt] = new Card(i, suit);
-        CARDS_DICT[suit + i] = CARDS[cnt];
-        cnt++;
-    }
-});
-shuffle(CARDS);
-console.log(CARDS);
-
-const STACKS = [];
-
-for(let stackIndex = 0; stackIndex < 7; stackIndex++) {
-    STACKS[stackIndex] = [];
-    for (let j = 0; j <= stackIndex; j++) {
-        STACKS[stackIndex][j] = CARDS.pop();
-        console.log(STACKS[stackIndex][j]);
-    }
-    // STACKS[stackIndex][stackIndex].setVisible();
-}
-console.log("here");
-console.log(STACKS);
-
-const PILES = [];
-
-for(let i = 0; i < 7; i++) {
-    PILES[i] = new Pile(STACKS[i], i);
 }
 
 function getCardObject(id) {
@@ -311,7 +234,6 @@ function removeClassFromAll(className) {
     }
 }
 
-
 function cardClicked(cardElement) {
     console.log("clicked " + cardElement.id);
     let cardObject = getCardObject(cardElement.id);
@@ -321,7 +243,7 @@ function cardClicked(cardElement) {
         selectedCard = cardObject;
         isCardSelected = true;
     } else if (isCardSelected)  {
-        // if (cardObject.pile.isLegal(selectedCard)) {
+
         if (cardObject === selectedCard) {
             deselect();
         } else if (isLegalMove(selectedCard, cardObject)) {
@@ -344,12 +266,10 @@ function moveCard(cardElement, toFoundation=false) {
         selectedCard.getImageElement().onclick = function() {cardClicked(selectedElement)};
     }
     console.log(selectedCard.getImageElement().onclick);
-    // console.log(cardObject.getImageElement().onclick);
-    // document.getElementById(selectedCard.id + "Image").classList.remove("shown-selected");
+
     if (selectedCard === OPEN_CARDS[OPEN_CARDS.length-1]) {
         OPEN_CARDS.pop();
-        // document.getElementById("PileShown").src = OPEN_CARDS[OPEN_CARDS.length-1].image;
-        // document.getElementById(selectedCard.id).id = OPEN_CARDS[OPEN_CARDS.length-1].id;
+
         setShownCard(OPEN_CARDS[OPEN_CARDS.length-1]);
     } else {
         let oldPile = selectedCard.pile;
@@ -360,22 +280,6 @@ function moveCard(cardElement, toFoundation=false) {
     isCardSelected = false;
 }
 
-const FOUNDATIONS = {
-    "Club": 0,
-    "Diamond": 0,
-    "Heart": 0,
-    "Spade": 0
-};
-// const FOUNDATION_PILES = {
-//     "Club": new Pile([], 8),
-//     "Diamond": new Pile([], 9),
-//     "Heart": new Pile([], 10),
-//     "Spade": new Pile([], 11)
-// };
-// console.log(FOUNDATION_PILES);
-// SUITS.forEach(suit => {
-//     FOUNDATION_PILES[suit].
-// })
 function FoundationClicked(suit) {
     if (!isCardSelected || selectedCard.suit !== suit || FOUNDATIONS[suit] + 1 !== selectedCard.value) {
         alert("Illegal move");
@@ -389,16 +293,11 @@ function FoundationClicked(suit) {
     let foundationDiv = document.getElementById(suit + "Foundation");
     moveCard(foundationDiv.firstChild, true);
 
-    // FOUNDATION_PILES[suit].addCard(selectedCard);
+
     let foundationPile = document.getElementById(suit + "Foundation");
-    // foundationPile.removeChild(foundationPile.firstElementChild);
+
     foundationPile.replaceChild(selectedCard.getElement(), foundationPile.firstElementChild);
     FOUNDATIONS[suit]++;
-
-    // if (selectedCard.value === 1) {
-    //     document.getElementById(suit + "Foundation").firstChild.removeChild(
-    //         document.getElementById(suit + "Foundation").firstChild.firstChild);
-    // }
 
     if (FOUNDATIONS["Club"] === 13 &&
         FOUNDATIONS["Diamond"] === 13 &&
@@ -444,4 +343,46 @@ function stackClicked(stackId) {
         console.log("stack clicked adding to pile:"); console.log(PILES[stackId]);
         PILES[stackId].addCard(selectedCard);
     }
+}
+
+let isCardSelected = false;
+let selectedCard = new Card(0, 0);
+
+const OPEN_CARDS = [];
+const CARDS = [];
+const SUITS = ["Club", "Diamond", "Heart", "Spade"];
+const CARDS_DICT = {};
+const FOUNDATIONS = {
+    "Club": 0,
+    "Diamond": 0,
+    "Heart": 0,
+    "Spade": 0
+};
+
+
+let cnt = 0;
+SUITS.forEach(suit => {
+    for(let i = 1;  i <= 13; i++) {
+        CARDS[cnt] = new Card(i, suit);
+        CARDS_DICT[suit + i] = CARDS[cnt];
+        cnt++;
+    }
+});
+shuffle(CARDS);
+console.log(CARDS);
+
+const STACKS = [];
+for(let stackIndex = 0; stackIndex < 7; stackIndex++) {
+    STACKS[stackIndex] = [];
+    for (let j = 0; j <= stackIndex; j++) {
+        STACKS[stackIndex][j] = CARDS.pop();
+        console.log(STACKS[stackIndex][j]);
+    }
+
+}
+console.log(STACKS);
+
+const PILES = [];
+for(let i = 0; i < 7; i++) {
+    PILES[i] = new Pile(STACKS[i], i);
 }
