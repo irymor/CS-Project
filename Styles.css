@@ -5,38 +5,19 @@ body {
     display: grid;
     grid-template-columns: repeat(7, 4rem);
     grid-template-rows: 7rem 10rem;
-    /*grid-auto-rows: auto;*/
     column-gap: 0.5rem;
     row-gap: 2rem;
-    /*align-items: center;*/
-    /*justify-items: center;*/
 }
 
-
-.deck {
-    /*border: 1px solid black;*/
-    /*border-radius: 0.2rem;*/
-    /*height: 100%*/
-}
-
-.card {
-    /*height: 100%;*/
-    /*width: 100%;*/
-
-}
 
 img {
     height: 7rem;
     width: 4rem;
-    /*border: 1px solid black;*/
     border-radius: 0.2rem;
 }
 
 .foundation {
     grid-row: 1;
-    /*grid-column: 3 / 6;*/
-    /*align-self: center;*/
-    /*justify-self: center;*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,9 +34,7 @@ img {
 
 .card-stack {
     grid-row: 1;
-    /*position: absolute;*/
     z-index: 1;
-    /*bottom: 20px;*/
 }
 .card-stack2, .card-stack {
     grid-row: 1;
@@ -63,48 +42,15 @@ img {
 .card-stack2 {
     grid-row: 1;
     position: absolute;
-    /*top: var(--top);*/
     top: 30px;
-    /*grid-row-end: span 2;*/
     z-index: 2;
 }
-
-
-/*.card-stack3 {*/
-/*    padding-top: 1.9rem;*/
-/*    z-index: 1;*/
-/*}*/
-
-/*.card-stack2 {*/
-/*    padding-top: 1.9rem;*/
-/*    z-index: 2;*/
-/*}*/
-
-/*.card-stack2, .card-stack, .card-stack3 {*/
-/*    grid-row: 1;*/
-/*    grid-column: 1;*/
-/*}*/
 
 .pile {
     grid-row: 1;
     height: 7rem;
 }
 
-.pile-shown {
-    /*grid-column: span 2;*/
-}
-
-/*.selected > .card {*/
-/*    border-right: 1px dashed red;*/
-/*    border-left: 1px dashed red;*/
-/*    border-radius: 0.3rem;*/
-/*}*/
-
-/*.selected > .card {*/
-/*    border-right: 1px dashed red;*/
-/*    border-left: 1px dashed red;*/
-/*    border-radius: 0.3rem;*/
-/*}*/
 
 .selected {
     top: 15px;
@@ -122,8 +68,6 @@ img {
 }
 
 .foundation-suit {
-    /*align-items: center;*/
-    /*justify-items: center;*/
     font-size: 6rem;
     user-select: none;
 }
@@ -137,16 +81,12 @@ img {
     grid-column: 3;
     display: grid;
     grid-template-rows: 3rem 3rem;
-    /*gap: 1rem;*/
     grid-template-columns: 4rem;
-    /*justify-content: center;*/
-    /*align-items: center;*/
 }
 
 button {
     grid-row: 1;
     border: 2px solid mediumblue;
-    /* border: none; */
     border-radius: 0.2rem;
     font-size: 16px;
     background-color: inherit;
@@ -158,15 +98,9 @@ button {
 button:hover {
     color: white;
     background-color: mediumblue;
-    /*box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);*/
 }
 
 .counter {
     grid-row: 2;
-    /*justify-content: center;*/
-    /*align-content: center;*/
-    /*justify-self: center;*/
-    /*align-self: center;*/
-    /*display: flex;*/
     text-align: center;
 }
