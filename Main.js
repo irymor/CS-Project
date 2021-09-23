@@ -65,6 +65,7 @@ class Card {
         otherCard.getElement().classList.add("card-stack2");
         this.getElement().appendChild(otherCard.getElement());
         otherCard.pile = this.pile;
+
         console.log("added");
     }
 
@@ -114,9 +115,10 @@ class Pile {
         // console.log("last:"); console.log(this.last);
         while (card.childCard != null) {
             card = card.childCard;
-            this.cards.push(card);
-            this.size++;
-            this.last = card;
+            // this.cards.push(card);
+            // this.size++;
+            // this.last = card;
+            this.addCard(card);
         }
 
         return true;
@@ -166,7 +168,7 @@ class Pile {
 }
 
 function shuffle(array) {
-    for (var i = array.length - 1; i > 0; i--) {
+    for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         let temp = array[i];
         array[i] = array[j];
@@ -382,8 +384,8 @@ function FoundationClicked(suit) {
 
     // FOUNDATION_PILES[suit].addCard(selectedCard);
     let foundationPile = document.getElementById(suit + "Foundation");
-    foundationPile.removeChild(foundationPile.firstChild);
-    foundationPile.replaceChild(selectedCard.getElement(), foundationPile.firstChild);
+    // foundationPile.removeChild(foundationPile.firstElementChild);
+    foundationPile.replaceChild(selectedCard.getElement(), foundationPile.firstElementChild);
     FOUNDATIONS[suit]++;
 
     // if (selectedCard.value === 1) {
