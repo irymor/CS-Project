@@ -105,7 +105,7 @@ class Pile {
             card.getElement().classList.add("card-stack");
             card.pile = this;
         } else {
-            this.last.getElement().appendChild(card.getElement());
+            // this.last.getElement().appendChild(card.getElement());
             this.last.addChild(card);
         }
         console.log(this.cards);
@@ -113,12 +113,15 @@ class Pile {
         this.size++;
         this.last = card;
         // console.log("last:"); console.log(this.last);
-        while (card.childCard != null) {
-            card = card.childCard;
-            // this.cards.push(card);
-            // this.size++;
-            // this.last = card;
-            this.addCard(card);
+        // while (card.childCard != null) {
+        //     card = card.childCard;
+        //     // this.cards.push(card);
+        //     // this.size++;
+        //     // this.last = card;
+        //     this.addCard(card);
+        // }
+        if (card.childCard != null) {
+            this.addCard(card.childCard);
         }
 
         return true;
@@ -193,8 +196,8 @@ function setShownCard(newOpenCard) {
     let element = newOpenCard.getElement();
     let img = newOpenCard.getImageElement();
     img.onclick = function() {
-        shownCardClicked(element);
         img.classList.add("shown-selected");
+        shownCardClicked(element);
     };
 
     // element.removeChild(element.firstChild);
@@ -247,14 +250,16 @@ function openCard(){
 function shownCardClicked(cardElement) {
     console.log(isCardSelected);
     console.log("shown card clicked " + cardElement.id);
-    if (cardElement.id === "ShownCard") alert("here1");
-    if (isCardSelected) alert("here2");
+    let cardObject = getCardObject(cardElement.id);
+    console.log(cardObject);
+    if (isCardSelected && selectedCard === cardObject) {
+        deselect();
+        return;
+    }
     if (cardElement.id === "ShownCard" || isCardSelected) {
         alert("Illegal move!1");
         return;
     }
-    let cardObject = getCardObject(cardElement.id);
-    console.log(cardObject);
 
     // document.getElementById(cardElement.id).firstChild.
     selectedCard = cardObject;
@@ -317,7 +322,9 @@ function cardClicked(cardElement) {
         isCardSelected = true;
     } else if (isCardSelected)  {
         // if (cardObject.pile.isLegal(selectedCard)) {
-        if (isLegalMove(selectedCard, cardObject)) {
+        if (cardObject === selectedCard) {
+            deselect();
+        } else if (isLegalMove(selectedCard, cardObject)) {
             moveCard(cardElement);
             cardObject.pile.addCard(selectedCard);
         }
@@ -393,6 +400,12 @@ function FoundationClicked(suit) {
     //         document.getElementById(suit + "Foundation").firstChild.firstChild);
     // }
 
+    if (FOUNDATIONS["Club"] === 13 &&
+        FOUNDATIONS["Diamond"] === 13 &&
+        FOUNDATIONS["Heart"] === 13 &&
+        FOUNDATIONS["Spade"] === 13) {
+        alert("YOU WON!")
+    }
 }
 
 function deselect() {
@@ -405,11 +418,13 @@ function deselect() {
 function isLegalMove(card, destinationCard) {
 
     if (destinationCard.color + card.color === 1 &&
-        destinationCard.value === 1 + card.value) {
+        destinationCard.value === 1 + card.value &&
+        destinationCard.childCard == null) {
         return true;
     } else if (card.value === 1 + destinationCard.value &&
         card.suit === destinationCard.suit &&
-        FOUNDATIONS[destinationCard.suit] === destinationCard.value) {
+        FOUNDATIONS[destinationCard.suit] === destinationCard.value &&
+        card.childCard == null) {
         return true;
     }  else {
         console.log("Illegal: "); console.log(card);
