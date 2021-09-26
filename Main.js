@@ -1,3 +1,18 @@
+const STACKS = [];
+const PILES = [];
+const OPEN_CARDS = [];
+const CARDS = [];
+const SUITS = ["Club", "Diamond", "Heart", "Spade"];
+const CARDS_DICT = {};
+const FOUNDATIONS = {
+    "Club": 0,
+    "Diamond": 0,
+    "Heart": 0,
+    "Spade": 0
+};
+let isCardSelected = false;
+let selectedCard;
+
 class Card {
     childCard;
     element;
@@ -22,6 +37,9 @@ class Card {
         return this.visible;
     }
 
+    /**
+     * Set flipped card to show suit and value.
+     */
     setVisible() {
         this.visible = true;
         console.log("setting visible:");
@@ -29,11 +47,15 @@ class Card {
         document.getElementById(this.id + "Image").src = this.image;
     }
 
+    /**
+     * Create HTML element for the card.
+     * @returns Element card element.
+     */
     createCardElement() {
-        var card = document.createElement("div");
+        let card = document.createElement("div");
         card.className = "card";
         card.id = this.id;
-        var img = document.createElement("img");
+        let img = document.createElement("img");
         if (this.visible) {
             img.src = this.image;
         } else {
@@ -46,14 +68,25 @@ class Card {
         return card;
     }
 
+    /**
+     * Returns HTML Element of object's image.
+     */
     getImageElement() {
         return this.getElement().firstChild;
     }
 
+    /**
+     * Returns HTML Element of object.
+     */
     getElement() {
         return this.element;
     }
 
+
+    /**
+     * Adds card on top of this card.
+     * @param {Card} otherCard: Card to add on this.
+     */
     addChild(otherCard) {
         console.log("adding");
         this.childCard = otherCard;
@@ -94,6 +127,11 @@ class Pile {
         }
     }
 
+
+    /**
+     * Adds card and its children to pile.
+     * @param {Card} card: card to add as last in pile.
+     */
     addCard(card) {
         if (this.size === 0) {
             this.getElement().appendChild(card.getElement());
@@ -111,10 +149,13 @@ class Pile {
         if (card.childCard != null) {
             this.addCard(card.childCard);
         }
-
-        return true;
     }
 
+
+    /**
+     * Removes card and its children from pile.
+     * @param {Card} card: card to remove from pile.
+     */
     removeCard(card) {
         if (this.size === 1) {
             this.size = 0;
@@ -123,7 +164,7 @@ class Pile {
             console.log("removeCard error");
         } else {
             this.size--;
-            var index = this.cards.indexOf(card);
+            let index = this.cards.indexOf(card);
             console.log(index);
             if (index > -1) this.cards.splice(index, 1);
 
@@ -140,6 +181,12 @@ class Pile {
         }
     }
 
+
+    /**
+     * Helper function for constructor, adds card to pile when initialized.
+     * @param {Card} card: card to add to pile.
+     * @param {int} index: index of card in pile.
+     */
     initialAddCard(card, index) {
         if (index === 0) {
             this.getElement().appendChild(card.element);
@@ -149,15 +196,29 @@ class Pile {
         }
     }
 
+
+    /**
+     * Gets pile HTML Element.
+     * @returns {HTMLElement}
+     */
     getElement() {
         return document.getElementById(this.id);
     }
 
+
+    /**
+     * Flips last card in pile.
+     */
     setLastVisible() {
         if (this.last != null) this.last.setVisible();
     }
 }
 
+
+/**
+ * Shuffles cards using Durstenfeld's shuffle.
+ * @param {Card[]} array: Array of cards to shuffle.
+ */
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -167,12 +228,14 @@ function shuffle(array) {
     }
 }
 
+
+/**
+ * Sets card as the top card in waste pile.
+ * @param {Card} newOpenCard: Card to set.
+ */
 function setShownCard(newOpenCard) {
     let shownDiv = document.getElementById("ShownCardDiv");
-    if (newOpenCard == null) {
-
-        return;
-    }
+    if (newOpenCard == null) return;
 
     let element = newOpenCard.getElement();
     let img = newOpenCard.getImageElement();
@@ -189,6 +252,10 @@ function setShownCard(newOpenCard) {
     newOpenCard.setVisible();
 }
 
+
+/**
+ * Takes card from pile into waste pile.
+ */
 function openCard(){
     console.log("opening card");
     console.log(isCardSelected);
@@ -204,6 +271,11 @@ function openCard(){
     }
 }
 
+
+/**
+ * Handles clicks on waste pile.
+ * @param {HTMLElement} cardElement: card on top of waste pile clicked.
+ */
 function shownCardClicked(cardElement) {
     console.log(isCardSelected);
     console.log("shown card clicked " + cardElement.id);
@@ -218,15 +290,25 @@ function shownCardClicked(cardElement) {
         return;
     }
 
-
     selectedCard = cardObject;
     isCardSelected = true;
 }
 
+
+/**
+ * Returns Card object by id.
+ * @param {String} id: id of card to search.
+ * @returns {Card} Card object matching id.
+ */
 function getCardObject(id) {
     return CARDS_DICT[id];
 }
 
+
+/**
+ * Removes class from all HTML Elements in document, used for deselection of cards.
+ * @param {String} className: class to remove.
+ */
 function removeClassFromAll(className) {
     let elements = document.getElementsByClassName(className);
     for(let i = 0; i < elements.length; i++) {
@@ -234,6 +316,11 @@ function removeClassFromAll(className) {
     }
 }
 
+
+/**
+ * Handles clicks on cards.
+ * @param {HTMLElement} cardElement: Element of card clicked.
+ */
 function cardClicked(cardElement) {
     console.log("clicked " + cardElement.id);
     let cardObject = getCardObject(cardElement.id);
@@ -253,6 +340,12 @@ function cardClicked(cardElement) {
     }
 }
 
+
+/**
+ * Moves selected card to be child of cardElement.
+ * @param           cardElement: card to add child to.
+ * @param {boolean} toFoundation: flags transferring to a foundation pile.
+ */
 function moveCard(cardElement, toFoundation=false) {
     console.log("moveCard"); console.log(cardElement);
     let cardObject = getCardObject(cardElement.id);
@@ -280,6 +373,12 @@ function moveCard(cardElement, toFoundation=false) {
     isCardSelected = false;
 }
 
+
+/**
+ * Handles clicks on a foundation pile.
+ * @param {String} suit: Suit of clicked foundation pile.
+ * @constructor
+ */
 function FoundationClicked(suit) {
     if (!isCardSelected || selectedCard.suit !== suit || FOUNDATIONS[suit] + 1 !== selectedCard.value) {
         alert("Illegal move");
@@ -307,6 +406,10 @@ function FoundationClicked(suit) {
     }
 }
 
+
+/**
+ * Cancels selection of all cards in document.
+ */
 function deselect() {
     isCardSelected = false;
     selectedCard = null;
@@ -314,8 +417,14 @@ function deselect() {
     removeClassFromAll("shown-selected");
 }
 
-function isLegalMove(card, destinationCard) {
 
+/**
+ * Checks whether moving card to be child of destinationCard is legal.
+ * @param {Card} card: card to be moved on top of destinationCard.
+ * @param {Card} destinationCard
+ * @returns {boolean} whether the move is legal according to Solitaire rules.
+ */
+function isLegalMove(card, destinationCard) {
     if (destinationCard.color + card.color === 1 &&
         destinationCard.value === 1 + card.value &&
         destinationCard.childCard == null) {
@@ -333,6 +442,11 @@ function isLegalMove(card, destinationCard) {
     }
 }
 
+
+/**
+ * Handles clicks on stacks, moving selectedCard to restart the pile if legal.
+ * @param {int} stackId: index of clicked stack.
+ */
 function stackClicked(stackId) {
     console.log("stack clicked: " + stackId);
     let stack = document.getElementById("Stack" + stackId);
@@ -345,21 +459,7 @@ function stackClicked(stackId) {
     }
 }
 
-let isCardSelected = false;
-let selectedCard = new Card(0, 0);
-
-const OPEN_CARDS = [];
-const CARDS = [];
-const SUITS = ["Club", "Diamond", "Heart", "Spade"];
-const CARDS_DICT = {};
-const FOUNDATIONS = {
-    "Club": 0,
-    "Diamond": 0,
-    "Heart": 0,
-    "Spade": 0
-};
-
-
+// Initialize CARDS and shuffle.
 let cnt = 0;
 SUITS.forEach(suit => {
     for(let i = 1;  i <= 13; i++) {
@@ -371,18 +471,17 @@ SUITS.forEach(suit => {
 shuffle(CARDS);
 console.log(CARDS);
 
-const STACKS = [];
+// Create 7 arrays of cards for stacks, according to required card layout.
 for(let stackIndex = 0; stackIndex < 7; stackIndex++) {
     STACKS[stackIndex] = [];
     for (let j = 0; j <= stackIndex; j++) {
         STACKS[stackIndex][j] = CARDS.pop();
         console.log(STACKS[stackIndex][j]);
     }
-
 }
 console.log(STACKS);
 
-const PILES = [];
+// Create Pile objects for stacks, keeping them in PILES list.
 for(let i = 0; i < 7; i++) {
     PILES[i] = new Pile(STACKS[i], i);
 }
