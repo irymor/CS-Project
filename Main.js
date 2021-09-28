@@ -1,10 +1,9 @@
-const STACKS = [];
 const PILES = [];
 const OPEN_CARDS = [];
 const CARDS = [];
 const SUITS = ["Club", "Diamond", "Heart", "Spade"];
 const CARDS_DICT = {};
-const FOUNDATIONS = {
+const FOUNDATIONS = { //indices of top cards in foundation piles
     "Club": 0,
     "Diamond": 0,
     "Heart": 0,
@@ -17,8 +16,14 @@ class Card {
     childCard;
     element;
     pile;
+
+    /**
+     * Create card object and corresponding element in document.
+     * @param {int}     value:      value of card, 1-13.
+     * @param {String}  suit:       card suit.
+     * @param {boolean} visible:    whether the card value and suit should be visible in document.
+     */
     constructor(value, suit, visible=false) {
-        console.log("Card constructor");
         this.value = value;
         this.suit = suit;
         this.visible = visible;
@@ -42,8 +47,6 @@ class Card {
      */
     setVisible() {
         this.visible = true;
-        console.log("setting visible:");
-        console.log(this);
         document.getElementById(this.id + "Image").src = this.image;
     }
 
@@ -88,43 +91,33 @@ class Card {
      * @param {Card} otherCard: Card to add on this.
      */
     addChild(otherCard) {
-        console.log("adding");
         this.childCard = otherCard;
 
         otherCard.getElement().classList.add("card-stack2");
         this.getElement().appendChild(otherCard.getElement());
         otherCard.pile = this.pile;
-
-        console.log("added");
     }
 
 }
 
 class Pile {
+
+    /**
+     * Create Pile object and set last card to be visible.
+     * @param {Card[]}  cards:      cards to add to pile.
+     * @param {int}     stackIndex: index of pile, 0-6.
+     */
     constructor(cards, stackIndex) {
         this.cards = cards;
         this.size = 0;
-        this.first = cards[0];
         this.last = cards[cards.length-1];
         this.id = "Stack" + stackIndex;
-        console.log(stackIndex);
         this.cards.forEach(card => {
             card.pile = this;
             this.initialAddCard(card, this.size);
             this.size++;
         });
         this.setLastVisible();
-    }
-
-    isLegal(card) {
-        if (this.last.color + card.color === 1 &&
-            this.last.value === 1 + card.value) {
-            return true;
-        } else {
-            console.log("Illegal: "); console.log(card);
-            alert("Illegal move!");
-            return false;
-        }
     }
 
 
@@ -141,7 +134,6 @@ class Pile {
         } else {
             this.last.addChild(card);
         }
-        console.log(this.cards);
         this.cards.push(card);
         this.size++;
         this.last = card;
@@ -165,7 +157,7 @@ class Pile {
         } else {
             this.size--;
             let index = this.cards.indexOf(card);
-            console.log(index);
+
             if (index > -1) this.cards.splice(index, 1);
 
             if (index > 0) {
@@ -175,8 +167,6 @@ class Pile {
                 this.last = null;
             }
 
-            console.log("removing: ");
-            console.log(card);
             if (card.childCard != null) this.removeCard(card.childCard);
         }
     }
@@ -184,8 +174,8 @@ class Pile {
 
     /**
      * Helper function for constructor, adds card to pile when initialized.
-     * @param {Card} card: card to add to pile.
-     * @param {int} index: index of card in pile.
+     * @param {Card} card:  card to add to pile.
+     * @param {int}  index: index of card in pile.
      */
     initialAddCard(card, index) {
         if (index === 0) {
@@ -257,8 +247,6 @@ function setShownCard(newOpenCard) {
  * Takes card from pile into waste pile.
  */
 function openCard(){
-    console.log("opening card");
-    console.log(isCardSelected);
     deselect();
 
     let newOpenCard = CARDS.pop();
@@ -277,10 +265,7 @@ function openCard(){
  * @param {HTMLElement} cardElement: card on top of waste pile clicked.
  */
 function shownCardClicked(cardElement) {
-    console.log(isCardSelected);
-    console.log("shown card clicked " + cardElement.id);
     let cardObject = getCardObject(cardElement.id);
-    console.log(cardObject);
     if (isCardSelected && selectedCard === cardObject) {
         deselect();
         return;
@@ -322,9 +307,7 @@ function removeClassFromAll(className) {
  * @param {HTMLElement} cardElement: Element of card clicked.
  */
 function cardClicked(cardElement) {
-    console.log("clicked " + cardElement.id);
     let cardObject = getCardObject(cardElement.id);
-    console.log(cardObject);
     if (!isCardSelected && cardObject.visible) {
         cardElement.classList.add("selected");
         selectedCard = cardObject;
@@ -347,7 +330,6 @@ function cardClicked(cardElement) {
  * @param {boolean} toFoundation: flags transferring to a foundation pile.
  */
 function moveCard(cardElement, toFoundation=false) {
-    console.log("moveCard"); console.log(cardElement);
     let cardObject = getCardObject(cardElement.id);
     selectedCard.getElement().classList.remove("selected");
     removeClassFromAll("shown-selected");
@@ -358,7 +340,6 @@ function moveCard(cardElement, toFoundation=false) {
     } else {
         selectedCard.getImageElement().onclick = function() {cardClicked(selectedElement)};
     }
-    console.log(selectedCard.getImageElement().onclick);
 
     if (selectedCard === OPEN_CARDS[OPEN_CARDS.length-1]) {
         OPEN_CARDS.pop();
@@ -367,7 +348,6 @@ function moveCard(cardElement, toFoundation=false) {
     } else {
         let oldPile = selectedCard.pile;
         oldPile.removeCard(selectedCard);
-        console.log("last"); console.log(oldPile.last);
         oldPile.setLastVisible();
     }
     isCardSelected = false;
@@ -382,7 +362,6 @@ function moveCard(cardElement, toFoundation=false) {
 function FoundationClicked(suit) {
     if (!isCardSelected || selectedCard.suit !== suit || FOUNDATIONS[suit] + 1 !== selectedCard.value) {
         alert("Illegal move");
-        console.log(!isCardSelected, selectedCard.suit !== suit, FOUNDATIONS[suit] + 1 !== selectedCard.value);
         return;
     }
     if (selectedCard.childCard != null) {
@@ -435,8 +414,6 @@ function isLegalMove(card, destinationCard) {
         card.childCard == null) {
         return true;
     }  else {
-        console.log("Illegal: "); console.log(card);
-        console.log("destinationCard: "); console.log(destinationCard);
         alert("Illegal move!3");
         return false;
     }
@@ -448,15 +425,19 @@ function isLegalMove(card, destinationCard) {
  * @param {int} stackId: index of clicked stack.
  */
 function stackClicked(stackId) {
-    console.log("stack clicked: " + stackId);
     let stack = document.getElementById("Stack" + stackId);
     if (!stack.hasChildNodes() && isCardSelected && selectedCard.value === 13) {
-        console.log("stack clicked moving "); console.log(selectedCard);
         moveCard(selectedCard.getElement());
 
-        console.log("stack clicked adding to pile:"); console.log(PILES[stackId]);
         PILES[stackId].addCard(selectedCard);
     }
+}
+
+/**
+ * Restarts game, called by Reset button.
+ */
+function restart() {
+    location.reload();
 }
 
 // Initialize CARDS and shuffle.
@@ -469,19 +450,13 @@ SUITS.forEach(suit => {
     }
 });
 shuffle(CARDS);
-console.log(CARDS);
 
-// Create 7 arrays of cards for stacks, according to required card layout.
+// Create Piles according to required card layout.
+let stack;
 for(let stackIndex = 0; stackIndex < 7; stackIndex++) {
-    STACKS[stackIndex] = [];
+    stack = [];
     for (let j = 0; j <= stackIndex; j++) {
-        STACKS[stackIndex][j] = CARDS.pop();
-        console.log(STACKS[stackIndex][j]);
+        stack[j] = CARDS.pop();
     }
-}
-console.log(STACKS);
-
-// Create Pile objects for stacks, keeping them in PILES list.
-for(let i = 0; i < 7; i++) {
-    PILES[i] = new Pile(STACKS[i], i);
+    PILES[stackIndex] = new Pile(stack, stackIndex);
 }
