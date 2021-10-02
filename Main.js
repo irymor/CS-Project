@@ -271,7 +271,7 @@ function shownCardClicked(cardElement) {
         return;
     }
     if (cardElement.id === "ShownCard" || isCardSelected) {
-        alert("Illegal move!1");
+        alert("Illegal move: cannot move cards to pile.");
         return;
     }
 
@@ -361,11 +361,13 @@ function moveCard(cardElement, toFoundation=false) {
  */
 function FoundationClicked(suit) {
     if (!isCardSelected || selectedCard.suit !== suit || FOUNDATIONS[suit] + 1 !== selectedCard.value) {
-        alert("Illegal move");
+        if (!isCardSelected) alert("Illegal move: cannot choose cards in foundation pile");
+        else if (selectedCard.suit !== suit) alert("Illegal move: pile suit doesn't match card suit");
+        else alert("Illegal move: cards must be put in foundation pile in order");
         return;
     }
     if (selectedCard.childCard != null) {
-        alert("Illegal move4");
+        alert("Illegal move: the selected card is not the last in its pile");
         return;
     }
     let foundationDiv = document.getElementById(suit + "Foundation");
@@ -381,7 +383,7 @@ function FoundationClicked(suit) {
         FOUNDATIONS["Diamond"] === 13 &&
         FOUNDATIONS["Heart"] === 13 &&
         FOUNDATIONS["Spade"] === 13) {
-        alert("YOU WON!")
+        alert("YOU WON!");
     }
 }
 
@@ -408,14 +410,10 @@ function isLegalMove(card, destinationCard) {
         destinationCard.value === 1 + card.value &&
         destinationCard.childCard == null) {
         return true;
-    } else if (card.value === 1 + destinationCard.value &&
-        card.suit === destinationCard.suit &&
-        FOUNDATIONS[destinationCard.suit] === destinationCard.value &&
-        card.childCard == null) {
-        return true;
-    }  else {
-        alert("Illegal move!3");
-        return false;
+    } else {
+        if (destinationCard.childCard == null) {
+            alert("Illegal move: cards must be put on top of card with value greater by 1 and different color");
+        } else {alert("Illegal move: destination card has another card on top of it");}
     }
 }
 
@@ -426,10 +424,13 @@ function isLegalMove(card, destinationCard) {
  */
 function stackClicked(stackId) {
     let stack = document.getElementById("Stack" + stackId);
-    if (!stack.hasChildNodes() && isCardSelected && selectedCard.value === 13) {
-        moveCard(selectedCard.getElement());
-
-        PILES[stackId].addCard(selectedCard);
+    if (!stack.hasChildNodes() && isCardSelected) {
+        if ( selectedCard.value === 13) {
+            moveCard(selectedCard.getElement());
+            PILES[stackId].addCard(selectedCard);
+        } else {
+            alert("Illegal move: only Kings can begin empty stacks");
+        }
     }
 }
 
